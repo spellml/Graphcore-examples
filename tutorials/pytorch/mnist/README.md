@@ -1,30 +1,38 @@
-# Graphcore
+# Spell on Graphcore IPU
 
 ---
-## PyTorch(PopTorch) MNIST Training Demo
+## PyTorch(PopTorch) MNIST Training Demo <a href="https://web.spell.ml/workspace_create?workspaceName=deeplab-voc-2012&githubUrl=https%3A%2F%2Fgithub.com%2Fspellml%2Fdeeplab-voc-2012"><img src=https://spell.ml/badge.svg height=20px/></a>
 
-This example demonstrates how to train a network on the MNIST dataset using PopTorch.
+This example demonstrates how to train a network on the MNIST dataset using PopTorch on the Spell platform. 
 
 ### File structure
 
 * `mnist_poptorch.py` The main file.
-* `README.md` This file.
+* `test_mnist.py` Test file.
+* `requirements.txt` Pip dependencies needed for tutorial. 
 
 ### How to use this demo
 
-1) Prepare the environment.
+1) Execute `spell run` to train the dataset
 
-    Install the Poplar SDK following the instructions in the Getting Started guide for your IPU system. Make sure to run the `enable.sh` scripts for Poplar and PopART and activate a Python virtualenv with PopTorch installed.
-
-    Then install the package requirements:
-
-       pip install -r requirements.txt
+    The Poplar SDK and PopTorch framework are by default installed on a Spell default IPU image. You can begin training your model in a single CLI command! 
 
 
-2) Run the program. Note that the PopTorch Python API only supports Python 3.
-Data will be automatically downloaded using torch vision utils.
+       spell run --machine-type IPU16 \ 
+            --pip-req requirements.txt \
+            "python3 mnist_poptorch.py"
 
-       python3 mnist_poptorch.py
+
+2) View resources and outputs from runs
+
+       [Placehodler image]
+       
+
+3) Run the test script to see your results
+
+       spell run --machine-type IPU16 \ 
+            --pip-req requirements.txt \
+            "python3 test_mnist.py"
 
 #### Options
 The program has a few command-line options:
@@ -40,3 +48,4 @@ The program has a few command-line options:
 `--epochs`            Number of epoch to train for.
 
 `--lr`                Learning rate of the optimizer.
+
