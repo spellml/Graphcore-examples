@@ -7,6 +7,7 @@ import torch.nn as nn
 import torchvision
 import poptorch
 import torch.optim as optim
+import os
 
 # The following is a workaround for pytorch issue #1938
 from six.moves import urllib
@@ -15,16 +16,22 @@ opener.addheaders = [("User-agent", "Mozilla/5.0")]
 urllib.request.install_opener(opener)
 
 
+# Create checkpoints directory
+CWD = os.environ["PWD"]
+if not os.path.exists(f"{CWD}/checkpoints/"):
+    os.mkdir(f"{CWD}/checkpoints/")
+
+
 def get_mnist_data(opts):
     training_data = torch.utils.data.DataLoader(
-                    torchvision.datasets.MNIST('~/.torch/datasets', train=True, download=True,
+                    torchvision.datasets.MNIST('/mnt/data', train=True, download=False,
                                                transform=torchvision.transforms.Compose([
                                                 torchvision.transforms.ToTensor(),
                                                 torchvision.transforms.Normalize((0.1307, ), (0.3081, ))])),
                     batch_size=opts.batch_size * opts.batches_per_step, shuffle=True, drop_last=True)
 
     validation_data = torch.utils.data.DataLoader(
-                      torchvision.datasets.MNIST('~/.torch/datasets', train=False, download=True,
+                      torchvision.datasets.MNIST('/mnt/data', train=False, download=False,
                                                  transform=torchvision.transforms.Compose([
                                                     torchvision.transforms.ToTensor(),
                                                     torchvision.transforms.Normalize((0.1307, ), (0.3081, ))])),
