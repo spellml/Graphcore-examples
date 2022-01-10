@@ -15,20 +15,20 @@ opener.addheaders = [("User-agent", "Mozilla/5.0")]
 urllib.request.install_opener(opener)
 
 
-def get_mnist_data(opts):
+def get_mnist_data():
     training_data = torch.utils.data.DataLoader(
                     torchvision.datasets.MNIST('~/.torch/datasets', train=True, download=True,
                                                transform=torchvision.transforms.Compose([
                                                 torchvision.transforms.ToTensor(),
                                                 torchvision.transforms.Normalize((0.1307, ), (0.3081, ))])),
-                    batch_size=opts.batch_size * opts.batches_per_step, shuffle=True, drop_last=True)
+                    batch_size=8 * 50, shuffle=True, drop_last=True)
 
     validation_data = torch.utils.data.DataLoader(
                       torchvision.datasets.MNIST('~/.torch/datasets', train=False, download=True,
                                                  transform=torchvision.transforms.Compose([
                                                     torchvision.transforms.ToTensor(),
                                                     torchvision.transforms.Normalize((0.1307, ), (0.3081, ))])),
-                      batch_size=opts.test_batch_size, shuffle=True, drop_last=True)
+                      batch_size=80, shuffle=True, drop_last=True)
     return training_data, validation_data
 
 
@@ -93,10 +93,10 @@ def accuracy(predictions, labels):
     return accuracy
 
 
-def train(training_model, training_data, opts):
+def train(training_model, training_data):
     nr_batches = len(training_data)
-    for epoch in range(1, opts.epochs+1):
-        print("Epoch {0}/{1}".format(epoch, opts.epochs))
+    for epoch in range(1, 8+1):
+        print("Epoch {0}/{1}".format(epoch, 8))
         bar = tqdm(training_data, total=nr_batches)
         for data, labels in bar:
             preds, losses = training_model(data, labels)
@@ -117,33 +117,33 @@ def test(inference_model, test_data):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='MNIST training in PopTorch')
-    parser.add_argument('--batch-size', type=int, default=8, help='batch size for training (default: 8)')
-    parser.add_argument('--batches-per-step', type=int, default=50, help='device iteration (default:50)')
-    parser.add_argument('--test-batch-size', type=int, default=80, help='batch size for testing (default: 80)')
-    parser.add_argument('--epochs', type=int, default=10, help='number of epochs to train (default: 10)')
-    parser.add_argument('--lr', type=float, default=0.05, help='learning rate (default: 0.05)')
-    opts = parser.parse_args()
+#    parser = argparse.ArgumentParser(description='MNIST training in PopTorch')
+#    parser.add_argument('--batch-size', type=int, default=8, help='batch size for training (default: 8)')
+#    parser.add_argument('--batches-per-step', type=int, default=50, help='device iteration (default:50)')
+#    parser.add_argument('--test-batch-size', type=int, default=80, help='batch size for testing (default: 80)')
+#    parser.add_argument('--epochs', type=int, default=10, help='number of epochs to train (default: 10)')
+#    parser.add_argument('--lr', type=float, default=0.05, help='learning rate (default: 0.05)')
+#    opts = parser.parse_args()
 
-    training_data, test_data = get_mnist_data(opts)
+    training_data, test_data = get_mnist_data()
     model = Network()
     model_with_loss = TrainingModelWithLoss(model)
-    model_opts = poptorch.Options().deviceIterations(opts.batches_per_step)
+    model_opts = poptorch.Options().deviceIterations(50)
 
 
     # run training, on IPU
     model_with_loss.train()  # Switch the model to training mode
     # Models are initialised in training mode by default, so the line above will
     # have no effect. Its purpose is to show how the mode can be set explicitly.
-    training_model = poptorch.trainingModel(model_with_loss, model_opts, optimizer=optim.SGD(model.parameters(), lr=opts.lr))
-    train(training_model, training_data, opts)
-    #
-    # # Update the weights in model by copying from the training IPU. This updates (model.parameters())
-    # training_model.copyWeightsToHost()
-    #
-    # # Check validation loss on IPU once trained. Because PopTorch will be compiled on first call the
-    # # weights in model.parameters() will be copied implicitly. Subsequent calls will need to call
-    # # inference_model.copyWeightsToDevice()
-    # model.eval()  # Switch the model to inference mode
-    # inference_model = poptorch.inferenceModel(model)
-    # test(inference_model, test_data)
+    training_model = poptorch.trainingModel(model_with_loss, model_opts, optimizer=optim.SGD(model.parameters(), lr=0.05))
+    train(training_model, training_data)
+
+    # Update the weights in model by copying from the training IPU. This updates (model.parameters())
+    training_model.copyWeightsToHost()
+
+    # Check validation loss on IPU once trained. Because PopTorch will be compiled on first call the
+    # weights in model.parameters() will be copied implicitly. Subsequent calls will need to call
+    # inference_model.copyWeightsToDevice()
+    model.eval()  # Switch the model to inference mode
+    inference_model = poptorch.inferenceModel(model)
+    test(inference_model, test_data)
