@@ -1,3 +1,4 @@
+
 Tutorial 1: programs and variables
 ----------------------------------
 
@@ -14,25 +15,17 @@ In this tutorial you will:
 - complete a small example program which communicates and adds data on the IPU;
 - optionally you will run this program on the IPU hardware.
 
-A brief `summary`_ and a list of additional resources are included at the end this tutorial.
-Graphcore also provides tutorials using Python deep learning frameworks `PyTorch <../../pytorch/>`_,
-`TensorFlow 1 <../../tensorflow/>`_, and `TensorFlow 2 <../../tensorflow2/>`_.
+Running on Spell
+................
 
-Setup
-......
+To run the completed tutorial script, Spell allows users to perform full environment setup to run the Graphcore C++ library, compile the binary using `g++` and execute in a single command
 
-In order to complete this tutorial you will need to have the Poplar SDK installed and
-enabled on your machine, you can download the latest release in the `Graphcore downloads centre
-<https://downloads.graphcore.ai/>`_ . Before you start, make sure to activate the SDK. How
-this is done will depend on whether you are using
-an `IPU-POD system <https://docs.graphcore.ai/projects/ipu-pod-getting-started/en/latest/i
-nstallation.html#setting-up-the-sdk-environment>`_,
-an `IPU-POD Direct Attach <https://docs.graphcore.ai/projects/ipu-pod-da-getting-started/en
-/latest/sw-installation.html#setting-up-the-sdk-environment>`_,
-or `Graphcloud <https://docs.graphcore.ai/projects/graphcloud-getting-started/en/latest/ins
-tallation.html#setting-up-the-sdk-environment>`_.
+```
+spell run --machine-type IPUx16 --apt g++ --docker-image graphcore/poplar:latest "g++ --std=c++11 complete/tut1_ipu_model_complete.cpp -lpoplar -o tut1 && ./tut1"
+```
 
-You will also need a C++ toolchain compatible with the C++11 standard, build commands in this tutorial use GCC.
+Beginning tutorial
+..................
 
 Using ``tut1_variables/start_here`` as your working directory, open ``tut1.cpp`` in a
 code editor. The file contains the outline of a C++ program with a ``main`` function,
