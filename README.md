@@ -25,6 +25,6 @@ For general IPU tutorials, please refer to the [Graphcore Github Tutorials repos
 Graphcore releases sample applications and code examples published in [Graphcore performance results](https://www.graphcore.ai/performance-results). 
 This limited preview of Graphcore IPUs on Spell supports a smaller list from the [Graphcore Github Examples repository](https://github.com/graphcore/examples).
 
-Read the [IPU Applications README](README-Apps.md) to know more about how to run IPU application examples in Spell, and for the list of supported models.
+Read the [Applications README](README-Apps.md) to know more about how to run IPU application examples and for the list of supported models in Spell.
 
-* For the rest of the IPU examples, please refer to the [Graphcore Github Examples repository](https://github.com/graphcore/examples). 
+* For the rest of the IPU examples, please refer to the [Graphcore Examples](https://github.com/graphcore/examples) repository. 
